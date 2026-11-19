@@ -638,11 +638,9 @@
         theme: safeGet(STORAGE_KEYS.theme, 'system'),
         position: safeGet(STORAGE_KEYS.position, 'top'),
         macron: safeGet(STORAGE_KEYS.macron, 'macron'),
-        tokenizerReady: false,
+        tokenizer: null,
         latestPlainRomaji: ''
       };
-
-      let kuromojiWorker = null;
 
       function safeGet(key, fallback) {
         try {
@@ -719,6 +717,7 @@
         btn.addEventListener('click', function () {
           inputEl.value = btn.getAttribute('data-sample');
           render();
+          requestWorkerTokenize();
           inputEl.focus();
         });
       });
@@ -784,7 +783,7 @@
         'ティ': 'ti',  'ディ': 'di',  'デュ': 'du',
         'ファ': 'fa',  'フィ': 'fi',  'フェ': 'fe',  'フォ': 'fo',
         'ウィ': 'wi',  'ウェ': 'we',  'ウォ': 'wo',
-        'ヴァ': 'va',  'ヴィ': 'vi',  'ヴ': 'vu',   'ヴェ': 've',  'ヴォ': 'vo',
+        'ヴァ': 'va',  'ヴィ': 'vi',  'ヴェ': 've',  'ヴォ': 'vo',
         'シェ': 'she', 'ジェ': 'je',  'チェ': 'che',
         'ツァ': 'tsa', 'ツィ': 'tsi', 'ツェ': 'tse', 'ツォ': 'tso'
       };
@@ -805,6 +804,7 @@
         'ダ': 'da', 'ヂ': 'ji', 'ヅ': 'zu', 'デ': 'de', 'ド': 'do',
         'バ': 'ba', 'ビ': 'bi', 'ブ': 'bu', 'ベ': 'be', 'ボ': 'bo',
         'パ': 'pa', 'ピ': 'pi', 'プ': 'pu', 'ペ': 'pe', 'ポ': 'po',
+        'ヴ': 'vu',
         'ァ': 'a',  'ィ': 'i',  'ゥ': 'u',  'ェ': 'e',  'ォ': 'o',
         'ャ': 'ya', 'ュ': 'yu', 'ョ': 'yo'
       };
@@ -824,14 +824,18 @@
           const ch = kata[i];
           const next = kata[i + 1] || '';
 
-          if (ch === 'ッ' && next) {
-            const pair = kata.slice(i + 1, i + 3);
-            const nextRomaji = DIGRAPHS[pair] || MONOGRAPHS[next] || '';
-            if (nextRomaji) {
-              out += nextRomaji.startsWith('ch') ? 't' : nextRomaji[0];
-              i += 1;
-              continue;
+          if (ch === 'ッ') {
+            if (next) {
+              const pair = kata.slice(i + 1, i + 3);
+              const nextRomaji = DIGRAPHS[pair] || MONOGRAPHS[next] || '';
+              if (nextRomaji) {
+                out += nextRomaji.startsWith('ch') ? 't' : nextRomaji[0];
+                i += 1;
+                continue;
+              }
             }
+            i += 1;
+            continue;
           }
 
           if (ch === 'ー' && out.length > 0) {
@@ -936,8 +940,24 @@
             }
           }
           if (!matched) {
-            tokens.push({ surface_form: line[i], reading: toKatakana(line[i]), pos: '' });
-            i++;
+            // Group consecutive Katakana or Hiragana into a single word chunk
+            const ch = line[i];
+            if (/[\u30A0-\u30FFー]/.test(ch)) {
+              let j = i + 1;
+              while (j < line.length && /[\u30A0-\u30FFー]/.test(line[j])) j++;
+              const chunk = line.slice(i, j);
+              tokens.push({ surface_form: chunk, reading: chunk, pos: '名詞' });
+              i = j;
+            } else if (/[\u3040-\u309F]/.test(ch)) {
+              let j = i + 1;
+              while (j < line.length && /[\u3040-\u309F]/.test(line[j])) j++;
+              const chunk = line.slice(i, j);
+              tokens.push({ surface_form: chunk, reading: toKatakana(chunk), pos: '' });
+              i = j;
+            } else {
+              tokens.push({ surface_form: ch, reading: toKatakana(ch), pos: '' });
+              i++;
+            }
           }
         }
         return tokens;
@@ -1055,44 +1075,33 @@
       }
 
       const lineTokenCache = new Map();
-      const pendingTokenLines = new Set();
       let renderTimer = null;
-      let workerRenderTimer = null;
 
       function getTokensForLine(line) {
         if (lineTokenCache.has(line)) {
           return lineTokenCache.get(line);
         }
-        if (state.tokenizerReady && kuromojiWorker && !pendingTokenLines.has(line)) {
-          pendingTokenLines.add(line);
-          try {
-            kuromojiWorker.postMessage({ type: 'tokenize', line: line });
-          } catch (e) {
-            pendingTokenLines.delete(line);
+        if (state.tokenizer) {
+          const tokens = state.tokenizer.tokenize(line);
+          if (lineTokenCache.size > 500) {
+            lineTokenCache.clear();
           }
+          lineTokenCache.set(line, tokens);
+          return tokens;
         }
         return tokenizeFallback(line);
-      }
-
-      function handleWorkerTokens(line, tokens) {
-        pendingTokenLines.delete(line);
-        if (!tokens) return;
-        if (lineTokenCache.size > 500) {
-          lineTokenCache.clear();
-        }
-        lineTokenCache.set(line, tokens);
-        if (inputEl.value.indexOf(line) !== -1) {
-          clearTimeout(workerRenderTimer);
-          workerRenderTimer = setTimeout(render, 40);
-        }
       }
 
       function scheduleRender() {
         clearTimeout(renderTimer);
         if (inputEl.value.length <= 400) {
           render();
+          requestWorkerTokenize();
         } else {
-          renderTimer = setTimeout(render, 90);
+          renderTimer = setTimeout(function () {
+            render();
+            requestWorkerTokenize();
+          }, 90);
         }
       }
 
@@ -1302,39 +1311,140 @@
         if (e.key === 'Escape') closePopover();
       });
 
-      function setOfflineMode() {
-        statusTextEl.textContent = 'Mode offline (Kana & kata dasar)';
-        engineLabelEl.textContent = 'Mode: Offline fallback';
-      }
+      // --- Non-blocking Web Worker for Kuromoji (prevents main-thread freeze/crash) ---
+      let worker = null;
+      let workerReady = false;
+      let pendingRequestId = 0;
 
-      try {
-        kuromojiWorker = new Worker('kuromoji-worker.js');
-      } catch (e) {
-        kuromojiWorker = null;
-      }
-
-      if (kuromojiWorker) {
-        kuromojiWorker.addEventListener('message', function (e) {
-          const data = e.data || {};
-          if (data.type === 'ready') {
-            state.tokenizerReady = true;
+      function loadKuromojiMainThread() {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js';
+        script.onload = function () {
+          if (typeof kuromoji === 'undefined') {
+            statusTextEl.textContent = 'Mode ringan · Live';
+            engineLabelEl.textContent = 'Mode: Kamus Ringan';
+            return;
+          }
+          kuromoji.builder({ dicPath: 'https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/' }).build(function (err, tok) {
+            if (err || !tok) {
+              statusTextEl.textContent = 'Mode ringan · Live';
+              engineLabelEl.textContent = 'Mode: Kamus Ringan';
+              return;
+            }
+            state.tokenizer = tok;
+            lineTokenCache.clear();
             statusPillEl.classList.add('ready');
             statusTextEl.textContent = 'Kamus aktif · Live';
             engineLabelEl.textContent = 'Mode: Kuromoji Kontekstual';
             render();
-          } else if (data.type === 'error') {
-            if (!state.tokenizerReady) setOfflineMode();
-          } else if (data.type === 'tokens') {
-            handleWorkerTokens(data.line, data.tokens);
+          });
+        };
+        script.onerror = function () {
+          statusTextEl.textContent = 'Mode ringan · Live';
+          engineLabelEl.textContent = 'Mode: Kamus Ringan';
+        };
+        document.head.appendChild(script);
+      }
+
+      function initKuromojiWorker() {
+        if (typeof Worker === 'undefined' || typeof Blob === 'undefined') {
+          loadKuromojiMainThread();
+          return;
+        }
+
+        const workerCode = [
+          'if (typeof window === "undefined") { self.window = self; }',
+          'var origOpen = XMLHttpRequest.prototype.open;',
+          'XMLHttpRequest.prototype.open = function(method, url) {',
+          '  if (typeof url === "string") {',
+          '    if (url.indexOf("https:/") === 0 && url.indexOf("https://") !== 0) { url = "https://" + url.slice(7); }',
+          '    else if (url.indexOf("http:/") === 0 && url.indexOf("http://") !== 0) { url = "http://" + url.slice(6); }',
+          '  }',
+          '  var args = Array.prototype.slice.call(arguments, 2);',
+          '  return origOpen.apply(this, [method, url].concat(args));',
+          '};',
+          'try {',
+          '  importScripts("https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js");',
+          '} catch (e) {',
+          '  self.postMessage({ type: "error", message: "importScripts failed" });',
+          '}',
+          'var tokenizer = null;',
+          'if (typeof kuromoji !== "undefined") {',
+          '  kuromoji.builder({ dicPath: "https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/" }).build(function(err, tok) {',
+          '    if (err || !tok) {',
+          '      self.postMessage({ type: "error", message: "build failed" });',
+          '      return;',
+          '    }',
+          '    tokenizer = tok;',
+          '    self.postMessage({ type: "ready" });',
+          '  });',
+          '}',
+          'self.onmessage = function(e) {',
+          '  if (!tokenizer || !e.data || e.data.type !== "tokenize") return;',
+          '  var lines = e.data.lines || [];',
+          '  var results = {};',
+          '  for (var i = 0; i < lines.length; i++) {',
+          '    var line = lines[i];',
+          '    results[line] = tokenizer.tokenize(line).map(function(t) {',
+          '      return { surface_form: t.surface_form, reading: t.reading, basic_form: t.basic_form, pos: t.pos };',
+          '    });',
+          '  }',
+          '  self.postMessage({ type: "tokens", id: e.data.id, results: results });',
+          '};'
+        ].join('\n');
+
+        try {
+          const blob = new Blob([workerCode], { type: 'application/javascript' });
+          const workerUrl = URL.createObjectURL(blob);
+          worker = new Worker(workerUrl);
+          URL.revokeObjectURL(workerUrl);
+
+          worker.onmessage = function (e) {
+            const msg = e.data;
+            if (!msg) return;
+            if (msg.type === 'ready') {
+              workerReady = true;
+              lineTokenCache.clear();
+              statusPillEl.classList.add('ready');
+              statusTextEl.textContent = 'Kamus aktif · Live';
+              engineLabelEl.textContent = 'Mode: Kuromoji Kontekstual';
+              requestWorkerTokenize();
+            } else if (msg.type === 'tokens' && msg.results) {
+              Object.keys(msg.results).forEach(function (line) {
+                if (lineTokenCache.size > 500) lineTokenCache.clear();
+                lineTokenCache.set(line, msg.results[line]);
+              });
+              render();
+            } else if (msg.type === 'error') {
+              loadKuromojiMainThread();
+            }
+          };
+
+          worker.onerror = function () {
+            workerReady = false;
+            loadKuromojiMainThread();
+          };
+        } catch (err) {
+          loadKuromojiMainThread();
+        }
+      }
+
+      function requestWorkerTokenize() {
+        if (!worker || !workerReady) return;
+        const lines = inputEl.value.split(/\r?\n/);
+        const missing = [];
+        lines.forEach(function (line) {
+          if (line && !lineTokenCache.has(line) && missing.indexOf(line) === -1) {
+            missing.push(line);
           }
         });
-        kuromojiWorker.addEventListener('error', function () {
-          if (!state.tokenizerReady) setOfflineMode();
-        });
-        kuromojiWorker.postMessage({ type: 'init' });
-      } else {
-        setOfflineMode();
+        if (missing.length > 0) {
+          pendingRequestId++;
+          worker.postMessage({ type: 'tokenize', id: pendingRequestId, lines: missing });
+        }
       }
+
+      initKuromojiWorker();
     })();
   </script>
 </body>

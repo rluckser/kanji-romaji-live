@@ -5,6 +5,7 @@ Website ringan berbasis HTML, CSS, dan JavaScript statis untuk mengonversi teks 
 ## Fitur Utama
 
 - **Konversi Live & Kontekstual**: Menggunakan analisis morfologi `kuromoji.js` sehingga bacaan Kanji dan partikel (`は` → `wa`, `へ` → `e`, `を` → `o`) menyesuaikan konteks kalimat.
+- **Tidak Membekukan Halaman**: Kamus kuromoji (~18 MB) dimuat dan dibangun di **Web Worker** (`kuromoji-worker.js`), bukan di thread utama. Halaman langsung bisa dipakai dengan konverter cadangan bawaan, lalu otomatis beralih ke mode kuromoji kontekstual begitu kamus siap di latar belakang.
 - **Posisi Romaji Fleksibel**: Pilih tampilan Romaji **di atas** atau **di bawah** Kanji.
 - **3 Mode Tema**: Tersedia tema **Terang**, **Gelap**, dan **Perangkat** (mengikuti pengaturan sistem secara otomatis).
 - **Gaya Vokal Panjang**: Pilih format makron (`ō` / `ū`) atau standar (`ou` / `uu`).

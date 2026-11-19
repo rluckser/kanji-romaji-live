@@ -1316,17 +1316,42 @@
       let workerReady = false;
       let pendingRequestId = 0;
 
-      function loadKuromojiMainThread() {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js';
-        script.onload = function () {
+      let mainThreadStarted = false;
+      function patchXhrForKuromoji() {
+        if (window.__xhrPatchedForKuromoji) return;
+        window.__xhrPatchedForKuromoji = true;
+        const origOpen = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function (method, url) {
+          if (typeof url === 'string') {
+            if (url.indexOf('https:/') === 0 && url.indexOf('https://') !== 0) {
+              url = 'https://' + url.slice(7);
+            } else if (url.indexOf('http:/') === 0 && url.indexOf('http://') !== 0) {
+              url = 'http://' + url.slice(6);
+            }
+          }
+          const args = Array.prototype.slice.call(arguments, 2);
+          return origOpen.apply(this, [method, url].concat(args));
+        };
+      }
+
+      function loadKuromojiMainThread(dicUrl) {
+        if (mainThreadStarted && !dicUrl) return;
+        mainThreadStarted = true;
+        patchXhrForKuromoji();
+        const dictPath = dicUrl || 'https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/';
+
+        function buildFromGlobal() {
           if (typeof kuromoji === 'undefined') {
             statusTextEl.textContent = 'Mode ringan · Live';
             engineLabelEl.textContent = 'Mode: Kamus Ringan';
             return;
           }
-          kuromoji.builder({ dicPath: 'https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/' }).build(function (err, tok) {
+          kuromoji.builder({ dicPath: dictPath }).build(function (err, tok) {
             if (err || !tok) {
+              if (!dicUrl) {
+                loadKuromojiMainThread('https://unpkg.com/kuromoji@0.1.2/dict/');
+                return;
+              }
               statusTextEl.textContent = 'Mode ringan · Live';
               engineLabelEl.textContent = 'Mode: Kamus Ringan';
               return;
@@ -1338,7 +1363,15 @@
             engineLabelEl.textContent = 'Mode: Kuromoji Kontekstual';
             render();
           });
-        };
+        }
+
+        if (typeof kuromoji !== 'undefined') {
+          buildFromGlobal();
+          return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js';
+        script.onload = buildFromGlobal;
         script.onerror = function () {
           statusTextEl.textContent = 'Mode ringan · Live';
           engineLabelEl.textContent = 'Mode: Kamus Ringan';
@@ -1399,10 +1432,18 @@
           worker = new Worker(workerUrl);
           URL.revokeObjectURL(workerUrl);
 
+          const workerWatchdog = setTimeout(function () {
+            if (!workerReady && !state.tokenizer) {
+              try { worker.terminate(); } catch (e) {}
+              loadKuromojiMainThread();
+            }
+          }, 8000);
+
           worker.onmessage = function (e) {
             const msg = e.data;
             if (!msg) return;
             if (msg.type === 'ready') {
+              clearTimeout(workerWatchdog);
               workerReady = true;
               lineTokenCache.clear();
               statusPillEl.classList.add('ready');

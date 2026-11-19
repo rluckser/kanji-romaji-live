@@ -27,7 +27,20 @@ function buildTokenizer() {
     return;
   }
 
+  // Watchdog: kuromoji's loader never calls back if a dictionary request
+  // stalls (e.g. a failed XHR is treated as an empty download and the
+  // gunzip throws silently). Report an error after 90s so the page can
+  // label its fast fallback mode honestly instead of "loading" forever.
+  // The build itself is NOT aborted: if it still finishes later, the
+  // 'ready' message below will upgrade the page then.
+  const watchdog = setTimeout(function () {
+    if (!tokenizer) {
+      postMessage({ type: 'error', message: 'Kamus terlalu lama dimuat (watchdog 90 detik)' });
+    }
+  }, 90000);
+
   kuromoji.builder({ dicPath: 'https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/' }).build(function (err, builtTokenizer) {
+    clearTimeout(watchdog);
     if (err || !builtTokenizer) {
       postMessage({ type: 'error', message: String(err || 'Tokenizer kosong') });
       return;

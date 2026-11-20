@@ -976,6 +976,45 @@
         return toKatakana(surf);
       }
 
+      const PHRASE_READING = { '今話': 'コンワ', '無し': 'ナシ' };
+      const NUM_READING = { '一': 'イチ', '二': 'ニ', '三': 'サン', '四': 'ヨン', '五': 'ゴ', '六': 'ロク', '七': 'ナナ', '八': 'ハチ', '九': 'キュウ', '十': 'ジュウ', '何': 'ナン' };
+      const HO_EUPHONY = { 'イチ': 'イッポ', 'サン': 'サンポ', 'ロク': 'ロッポ', 'ハチ': 'ハッポ', 'ジュウ': 'ジュッポ', 'ナン': 'ナンポ' };
+      const KANA_ONLY = /^[\u3040-\u30FF]+$/;
+      const STARTS_KANA = /^[\u3040-\u30FF]/;
+      const HAS_KANJI = /[\u4E00-\u9FAF\u3400-\u4DBF\u3005\u30F6]/;
+
+      function buildUnits(tokens) {
+        const units = [];
+        let i = 0;
+        while (i < tokens.length) {
+          const tok = tokens[i];
+          const surf = tok.surface_form;
+          if (!surf) { i++; continue; }
+          let ov = null, ovLen = 0, ovText = '', acc = '';
+          for (let L = 1; L <= 3 && i + L <= tokens.length; L++) {
+            acc += tokens[i + L - 1].surface_form;
+            if (PHRASE_READING[acc]) { ov = PHRASE_READING[acc]; ovLen = L; ovText = acc; }
+          }
+          if (ov) { units.push({ text: ovText, reading: ov, tok: tok, whole: true }); i += ovLen; continue; }
+          if (i + 1 < tokens.length && tokens[i + 1].surface_form === '歩' && NUM_READING[surf]) {
+            const numR = NUM_READING[surf];
+            units.push({ text: surf + '歩', reading: HO_EUPHONY[numR] || (numR + 'ホ'), tok: tok, whole: true });
+            i += 2; continue;
+          }
+          const reading = getTokenReading(tok);
+          if (/ッ$/.test(reading) && i + 1 < tokens.length) {
+            const nx = tokens[i + 1];
+            if (nx && KANA_ONLY.test(nx.surface_form) && nx.pos !== '記号') {
+              units.push({ text: surf + nx.surface_form, reading: reading + getTokenReading(nx), tok: tok, whole: true });
+              i += 2; continue;
+            }
+          }
+          units.push({ text: surf, reading: reading, tok: tok, whole: false });
+          i++;
+        }
+        return units;
+      }
+
       function render() {
         const raw = inputEl.value;
         charCountEl.textContent = raw.length + ' karakter';
@@ -1011,8 +1050,9 @@
 
           const plainParts = [];
 
-          tokens.forEach(function (tok) {
-            const surf = tok.surface_form;
+          const units = buildUnits(tokens);
+          units.forEach(function (u) {
+            const surf = u.text;
             if (!surf) return;
 
             if (IS_PUNCT.test(surf) || !HAS_KANJI_OR_KANA.test(surf)) {
@@ -1027,36 +1067,39 @@
             }
 
             totalWords++;
-            const readingKata = getTokenReading(tok);
-            const parts = splitOkurigana(surf, readingKata);
+            const readingKata = u.reading;
             let wordRomaji = '';
 
             const wordGroup = document.createElement('span');
             wordGroup.className = 'word-group';
             wordGroup.setAttribute('data-word', surf);
-            wordGroup.setAttribute('data-base', (tok.basic_form && tok.basic_form !== '*') ? tok.basic_form : surf);
+            wordGroup.setAttribute('data-base', (u.tok.basic_form && u.tok.basic_form !== '*') ? u.tok.basic_form : surf);
             wordGroup.setAttribute('data-reading', readingKata);
-            wordGroup.setAttribute('data-pos', tok.pos || '');
+            wordGroup.setAttribute('data-pos', u.tok.pos || '');
 
-            parts.forEach(function (part) {
-              const romaji = kanaToRomaji(part.reading, useMacron);
+            const addRuby = function (text, partReading) {
+              const romaji = kanaToRomaji(partReading, useMacron);
               wordRomaji += romaji;
-
               const ruby = document.createElement('ruby');
               ruby.className = 'ruby-token' + (isBottom ? ' pos-bottom' : '');
-
               const rb = document.createElement('span');
               rb.className = 'ruby-rb';
-              rb.textContent = part.text;
-
+              rb.textContent = text;
               const rt = document.createElement('rt');
               rt.className = 'ruby-rt';
               rt.textContent = romaji;
-
               ruby.appendChild(rt);
               ruby.appendChild(rb);
               wordGroup.appendChild(ruby);
-            });
+            };
+
+            if (u.whole || (STARTS_KANA.test(surf) && HAS_KANJI.test(surf))) {
+              addRuby(surf, readingKata);
+            } else {
+              splitOkurigana(surf, readingKata).forEach(function (part) {
+                addRuby(part.text, part.reading);
+              });
+            }
 
             wordGroup.setAttribute('data-romaji', wordRomaji);
             lineDiv.appendChild(wordGroup);

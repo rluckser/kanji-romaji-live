@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PROTOTIPE — Kamus Klik di Halaman Baca WN (Bab 462)</title>
+<style>
+:root{--bg:#0b1120;--surface:#111827;--line:#273449;--ink:#eef2f7;--ink2:#94a3b8;--accent:#a5b4fc}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,'Segoe UI',sans-serif}
+.banner{background:#7c2d12;color:#fff;font-size:13px;line-height:1.55;padding:10px 16px}
+.wrap{max-width:780px;margin:0 auto;padding:18px 16px 60px}
+h1{font-size:21px;line-height:1.4}
+.wntl-lang[hidden]{display:none}
+.lang-combo[hidden]{display:none}
+.lang-panel[hidden]{display:none}
+.lang-panel{display:flex;flex-direction:column;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:14px 0}
+.tool-group{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tool-group button{border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-size:13px;font-weight:600;padding:5px 11px;border-radius:8px;cursor:pointer}
+.tool-group button.on{background:var(--accent);color:#111827;border-color:var(--accent)}
+.tool-group button:disabled{opacity:.35;cursor:not-allowed}
+.tg-label{font-size:12px;font-weight:700;color:var(--ink2);min-width:64px}
+.lang-combo{display:flex;gap:16px;flex-wrap:wrap}
+.lang-note{font-size:12px;color:var(--ink2);margin:0}
+.romaji-status{font-size:12px;color:var(--ink2);font-weight:600}
+.chapter-body{font-size:18px;line-height:1.9}
+.chapter-body p{margin:0 0 1.2em}
+.lang-tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:1px 7px;margin-bottom:5px}
+.lang-pair{border-top:1px dashed var(--line);padding-top:12px}
+.lang-side{display:grid;gap:0 30px}
+.lang-side.cols-2{grid-template-columns:1fr 1fr}
+.lang-side.cols-3{grid-template-columns:1fr 1fr 1fr}
+#chapterBody ruby{ruby-align:center;cursor:pointer}
+#chapterBody ruby:hover rb{text-decoration:underline dotted var(--accent) 1px;text-underline-offset:3px}
+#chapterBody rt{font-size:.52em;font-weight:600;color:var(--accent);letter-spacing:.01em;line-height:1.25}
+#chapterBody p.rj-on{line-height:2.35}
+.dict-pop{position:fixed;z-index:80;display:none;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 34px rgba(0,0,0,.45);padding:12px 14px}
+.dict-pop.open{display:block}
+.dict-pop-head{display:flex;align-items:baseline;gap:8px}
+.dict-pop-word{font-size:19px;font-weight:800}
+.dict-pop-pos{font-size:11px;font-weight:700;color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:1px 8px}
+.dict-pop-reading{font-size:13px;color:var(--ink2);margin-top:2px}
+.dict-pop-meaning{font-size:15px;line-height:1.55;margin-top:7px}
+.dict-pop-foot{font-size:11px;color:var(--ink2);margin-top:9px;border-top:1px solid var(--line);padding-top:7px}
+</style></head><body>
+<div class="banner"><b>PROTOTIPE KAMUS KLIK — BUKAN HALAMAN LIVE.</b> Tiruan halaman baca Bab 462 dengan fitur Romaji yang sudah live, ditambah kamus klik. Cara coba: pilih bahasa <b>Jepang</b>, nyalakan <b>Romaji</b>, tunggu "Kamus aktif", lalu <b>klik kata Jepang yang berromaji</b>. Klik pertama mengunduh kamus arti (±640 KB, sekali saja).</div>
+<div class="wrap">
+<h1>Shangri-La Frontier Bab 462 — Naga, Oh Naga! Bagian Ketiga Puluh Sembilan</h1>
+<div class='lang-panel' id='langPanel' aria-label='Pilihan bahasa' hidden='hidden'>
+                <div class='tool-group'>
+                  <span class='tg-label'>Bahasa</span>
+                  <button data-langmode='id' type='button'>Indonesia</button>
+                  <button data-langmode='en' type='button'>English</button>
+                  <button data-langmode='jp' type='button'>Jepang</button>
+                  <button data-langmode='combo' type='button'>Gabungan</button>
+                </div>
+                <div class='lang-combo' id='langCombo' hidden='hidden'>
+                  <div class='tool-group'>
+                    <span class='tg-label'>Ikut tampil</span>
+                    <button data-langpick='id' type='button'>ID</button>
+                    <button data-langpick='en' type='button'>EN</button>
+                    <button data-langpick='jp' type='button'>JP</button>
+                  </div>
+                  <div class='tool-group'>
+                    <span class='tg-label'>Tampilan</span>
+                    <button data-langview='interleave' type='button'>Selang-seling</button>
+                    <button data-langview='side' type='button'>Berdampingan</button>
+                  </div>
+                </div>
+                <div class='lang-combo' id='romajiRow' hidden='hidden'>
+                  <div class='tool-group'>
+                    <span class='tg-label'>Romaji</span>
+                    <button data-romaji='off' type='button'>Mati</button>
+                    <button data-romaji='on' type='button'>Nyala</button>
+                  </div>
+                  <div class='tool-group'>
+                    <span class='tg-label'>Gaya</span>
+                    <button data-romajistyle='all' type='button'>Semua kata</button>
+                    <button data-romajistyle='kanji' type='button'>Khusus kanji</button>
+                  </div>
+                  <span class='romaji-status' id='romajiStatus'></span>
+                </div>
+                <p class='lang-note' id='dictHint'>Prototipe kamus klik: klik kata Jepang yang berromaji untuk melihat artinya.</p>
+                <p class='lang-note' id='langNote' hidden='hidden'></p>
+              </div>
+            </div>
+<article class='reader-sheet'><div class='chapter-body' id='chapterBody'>
+<hr>
+<p><i>[Catatan penulis]</i></p>
+<p>&quot;Eh!? Hari ini boleh ya mengabaikan biaya sembilan belas Baragiara di Pangaea Moon!?&quot;</p>
+<p>&quot;Karena Fimble tidak jatuh, ini update saja.&quot;</p>
+<hr>
+<p>◆</p>
+<p>Batasan Tanpa Skill sendiri tidak masalah. Masalahnya adalah ini bukan pertarungan solo, melainkan pertarungan raid.</p>
+<p>Karena hate beterbangan ke sana kemari, sulit menangkap timing saat Siegwurm sedang melihat &quot;aku&quot;.</p>
+<p>&quot;Bulan…… yah, masih bertahan.&quot;</p>
+<p>Baju Perang Kristal Emas (Exile Cross), setiap bagiannya secara bawaan memiliki fungsi &quot;menyimpan MP dengan bermandikan cahaya bulan&quot;.</p>
+<p>Mantel Bintang Langit Lapis (Lapistella) memiliki batasan bahwa MP yang tersimpan hanya bisa dipakai untuk sihir yang sudah dipasang, tapi yang ini tidak punya batasan itu, jadi bisa dipakai sebagai biaya Mukadeshiki 8-0.5 (Thousand).</p>
+<p>Dan selama masih bermandikan cahaya bulan, MP bisa diisi terus bahkan di tengah pertarungan—itulah alasan kenapa aku, yang status MP-nya 100 ke bawah, bisa terus memakai Mukadeshiki 8-0.5 sampai sekarang.</p>
+<p>&quot;Sialan, keras banget…… Kak Saiga! Bagaimana keadaan klon yang lain!?&quot;</p>
+<p>&quot;Rupanya serangan lebih mempan ke mereka daripada ke tubuh utamanya, tapi waktunya sudah begini…… meski yang pergi untuk pulih kembali, daya tembaknya tetap tidak cukup.&quot;</p>
+<p>&quot;Bertarung melawan naga-naga berwarna sekaligus itu tetap saja kesalahan desain, kan……!!&quot;</p>
+<p>Sialan kau, Amachi Ritsu! Kau mau menjadikan ShanFro juga game sampah!?</p>
+<p>Tapi tidak akan kubiarkan! Melihat game yang cukup kusayangi menjadi sepi, usang, lalu hilang itu menyakitkan, meski itu game sampah. Dengan keras kepala pun aku akan menang……!!</p>
+<p>Seolah menyetujui tekad itu, seberkas cahaya terbang membelah langit malam dan mengenai kepala Siegwurm, lebih tepatnya tanduknya, tanpa meleset satu milimeter pun, sama seperti tiga tembakan sebelumnya.</p>
+<p>&#x27;Nuguu! Lagi-lagi……!&#x27;</p>
+<p>&quot;……Akurasi yang luar biasa.&quot;</p>
+<p>&quot;Yah, kalau &#x27;Tanpa Hutan&#x27;, dia memang bisa segitu, sih……!&quot;</p>
+<p>Soalnya, dia itu orang yang bahkan dengan musket barang hanyutan saja bisa headshot dengan mudah—kalau dibiarkan memakai peralatan kapal, sudah pasti jadinya begini……!!</p>
+<p>◇</p>
+<p>&quot;Hmm…… yang tadi itu empat puluh poin, ya, padahal aku mengincar tanduk yang sama.&quot;</p>
+<p>Bergumam pelan. Yashiro Bird, yang memberi nilai merah untuk tembakannya sendiri, bersandar di tempat menembak sambil memastikan anak panah baru terbentuk di &quot;ballista&quot;, dan tetap mengawasi Raja Naga emas yang mengamuk di kejauhan tanpa lengah.</p>
+<p>&quot;Wah…… kapal yang bagus, Bryubas, namanya tidak begitu kupahami tapi bagian meriam utamanya yang berupa ballista itu keren.&quot;</p>
+<p>Kapal Penakluk Laut &quot;Bryubas&quot;, sudah jelas, dibangun dengan asumsi pertempuran di atas air. Meski sebenarnya strukturnya jelas dirancang untuk pertempuran jarak dekat—seperti tanduk tempur bersenjata untuk menabrak dari depan dan &quot;sayap pedang&quot; di kedua sisi lambung untuk saat berpapasan—kapal ini juga dilengkapi &quot;meriam utama&quot; yang sudah sewajarnya ada pada kapal perang.</p>
+<p>Yang dipasang di tengah dek itu seharusnya hanyalah busur silang biasa, tapi karena &quot;Investor&quot; menyediakan Kristal Bintang Lapisteria dalam jumlah yang bisa membeli satu kota, kapal itu dimodifikasi menjadi lebih dari sekadar pelontar energi kinetik.</p>
+<p>───Namanya adalah Type Six Ballista (Lepnorca).</p>
+<p>Benda itu bisa disebut busur sihir kapal berdaya besar yang membentuk anak panah dari suplai mana Kristal Bintang Lapisteria dan menembakkannya dengan kekuatan yang luar biasa.</p>
+<p>……Sebagai catatan tambahan, nama sampai &quot;ballista&quot; itu pemberian Norman, sang pembuat, sedangkan nama &quot;Lepnorca&quot; adalah pemberian Sunraku.</p>
+<p>&quot;Wah, kalau tank-nya banyak, jadi gampang kena, enak, ya.&quot;</p>
+<p>&quot;K-kenapa ada kapal di tempat seperti ini……? Ini punyamu?&quot;</p>
+<p>&quot;Kami juga bisa mengoperasikannya!?&quot;</p>
+<p>Para pemain yang naik ke atas dek, seperti yang dilakukan Yashiro Bird beberapa saat lalu, bertanya beramai-ramai kepada Yashiro Bird, sang awak kapal.</p>
+<p>&quot;Ah—ini milik orang lain, lho. Aku bisa memakainya karena aku anggota party, tapi katanya kalau pemain yang tidak ada hubungannya terus naik, nilai Karma-nya naik karena masuk tanpa izin, jadi hati-hati, ya?&quot;</p>
+<p>&quot;Serius!?&quot;</p>
+<p>&quot;Waduh. Ah, semoga sukses dukungannya!!&quot;</p>
+<p>&quot;Makasih-makasih~&quot;</p>
+<p>Itu bohong. Lagipula nilai Karma itu data tersembunyi, jadi tidak mungkin bisa diketahui di sini apakah benar-benar naik atau tidak. Tapi kalau dikatakan dengan penuh percaya diri, orang jadi tertipu juga.</p>
+<p>Sambil menerima sorakan itu tanpa ragu, Yashiro Bird menyipitkan mata sambil menyetel halus ballista yang pengisian ulangnya sudah selesai dengan tuas kemudinya.</p>
+<p>&quot;Kalau bisa, aku ingin menjatuhkan setidaknya satu…… ya……!&quot;</p>
+<p>Anak panah yang dilepaskan itu melintasi medan perang……</p>
+<p>◆</p>
+<p>Melintasi medan perang, lalu memakai lutut Siegwurm sebagai pijakan untuk naik lebih tinggi lagi. Para prajurit ringan yang berjalan di udara dengan santai itu sedikit membuatku iri, tapi karena spesifikasi dasarku sudah ditingkatkan, kalau aku sembarangan memperkuat tubuh, aku bisa terlempar begitu saja. Meski begitu, berjalan di udara tetap kuinginkan, sih……</p>
+<p>&#x27;Berani-beraninya kau mencoba naik ke punggungku! Tapi itu naif!!&#x27;</p>
+<p>&quot;Guwaa!?&quot;</p>
+<p>&quot;Dragon Ride-nya gagal!&quot;</p>
+<p>Para pemain yang sampai di punggung Siegwurm lebih cepat daripada aku yang memanjat sendiri itu terlempar oleh kepakan sayapnya.</p>
+<p>Tapi aku ini sudah berkali-kali memanjat makhluk raksasa sampai mati-matian, jadi kalau kau mau melepaskanku, menarilah breakdance dulu!!</p>
+<p>&quot;Hai.&quot;</p>
+<p>&#x27;Kau……!!&#x27;</p>
+<p>&quot;Kupotong seperti kapak!!&quot;</p>
+<p>Klang!! Bilah ungu Mukadeshiki 8-0.5 terpental. Yah, aku hanya sedikit berharap bisa patah dalam sekali tebas…… tapi, aku sudah memastikannya dengan jelas.</p>
+<p>&quot;Sedikit retak, ya……!?&quot;</p>
+<p>&#x27;Nuaa!!&#x27;</p>
+<p>&quot;Uooh!&quot;</p>
+<p>Di udara! Terlempar! Memutar tubuh! Mendarat!!</p>
+<p>&quot;Tetap saja, daripada mengikis sedikit demi sedikit, lebih mudah patah kalau aku memaksa mendekat dan memukul, ya……&quot;</p>
+<p>Tapi aku juga tidak berpikir trik yang sama akan berhasil berkali-kali. Dan karena medan perang yang terlalu padat, berbeda dengan tank yang bisa membentuk formasi saat genting, job penyerang garis depan selalu menanggung risiko tabrakan.</p>
+<p>Ketika aku sempat berpikir, alangkah baiknya kalau saja napas Siegwurm atau semacamnya menyapu bersih semua orang kecuali aku, garis depan benar-benar menguap karena napas itu, tapi beberapa menit kemudian aku sadar bahwa para pemain itu tidak bisa mati, jadi bukan berarti aku bisa bergerak dengan nyaman.</p>
+<p>Dan, saat itulah.</p>
+<p>&#x27;Dengan ini, per waktu sekarang, kami mengonfirmasi penaklukan &quot;Bryleinyego si Naga Putih&quot;. Penyerang terakhir adalah NPC &quot;Dilnadia si Pedang Ganda Tak Tertandingi (Mora Vegalta)&quot;.&#x27;</p>
+<p>&quot;NPC yang lebih menonjol daripada pemain, itu hal yang biasa, kan…… bukan itu!!&quot;</p>
+<p>&quot;Bryleinyego mati? Tunggu, Eldranza sudah tewas sejak awal, Deuredhow mati, Bryleinyego mati…… yang tersisa hanya Blockentreed dan Noirlind?&quot;</p>
+<p>&quot;Oi, oi, oi, apa ini bisa berhasil……!&quot;</p>
+<p>Naga berwarna tinggal dua. Betapapun hebat daya tahannya, Blockentreed sudah bertarung sejak awal fase penentuan, dan meski belum masuk Status Bencana (Hazard Mode), ia bisa tumbang kapan saja.</p>
+<p>Dan yang lebih penting, fakta bahwa Bryleinyego—yang melahirkan monster-monster kecil dalam jumlah besar—sudah mati itu sangat buruk.</p>
+<p>&quot;Apakah para job produksi akan datang……!!&quot;</p>
+<p>……Bercanda, deh.</p>
+<p>Sebentar lagi saatnya tiba. Akan kujujur saja, apa yang akan terjadi dari sini pasti akan meninggalkan dendam. Tapi semua sudah memutuskan untuk melakukannya dan aku pun sudah cukup membantu, jadi ini bukan saatnya lagi ragu-ragu. Kalau sudah gawat, aku akan membelot ke Rabbits!!</p>
+<p>Skull Azuchi-kun…… ayo kita perang saudara, saling memangsa dan saling menjatuhkan itu keahlian manusia, kan.</p>
+<p>&#x27;Pernyataan perang telah diterima!!&#x27;</p>
+<p>&#x27;Menara Utama Bertulang Skull Azuchi vs Kastil Satu Malam Sasorisnomata&#x27;</p>
+<p>&#x27;Perang Kastil dimulai dari sekarang!!&#x27;</p>
+<hr>
+<p><i>[Catatan penulis di akhir bab]</i></p>
+<p>&quot;Perang Kastil bisa dinyatakan bila &#x27;nilai sumber daya kedua belah pihak hampir sama&#x27; atau &#x27;nilai sumber daya bangunan-bangunan itu hampir sama setelah ditambahkan total nilai sumber daya para pemain yang termasuk dalam party atau klan yang sama dengan pemilik bangunan tersebut&#x27; (informasi nonpublik dari klan pengamat 【Library】).&quot;</p>
+<p>&quot;Sasorisnomata…… bagaimana caranya ia mendapatkan sumber daya yang bisa menandingi Skull Azuchi………&quot;</p>
+
+<div class="wntl-lang" data-lang="en" hidden>
+<p><i>[Author&#x27;s Note]</i></p>
+<p>&quot;Huh!? Today we&#x27;re allowed to ignore the nineteen-Baragiara cost on Pangaea Moon!?&quot;</p>
+<p>&quot;Since Fimble didn&#x27;t drop, this is just an update.&quot;</p>
+<p>◆</p>
+<p>The Skill-less restriction itself wasn&#x27;t a problem. The problem was that this wasn&#x27;t a solo fight—it was a raid battle.</p>
+<p>With hate flying all over the place, it was hard to catch the timing when Siegwurm was looking at &quot;me.&quot;</p>
+<p>&quot;The moon... yeah, still holding up.&quot;</p>
+<p>Every piece of the Golden Crystal Battle Armor (Exile Cross) came built-in with the function &quot;store MP by bathing in moonlight.&quot;</p>
+<p>The Lapis Starry Sky Cloak (Lapistella) had a restriction where stored MP could only be used for spells already slotted into it, but this armor had no such limitation, so I could use it to pay the cost of Mukadeshiki 8-0.5 (Thousand).</p>
+<p>And as long as I kept bathing in moonlight, my MP could keep refilling even mid-battle—that was the whole reason I, with an MP stat under 100, had been able to keep using Mukadeshiki 8-0.5 all the way up to now.</p>
+<p>&quot;Damn it, he&#x27;s tough as hell... Saiga-nee! How are the other clones doing!?&quot;</p>
+<p>&quot;Apparently attacks are landing better on them than on the main body, but given how late it&#x27;s getting... even with the people who went to recover coming back, our firepower still isn&#x27;t enough.&quot;</p>
+<p>&quot;Fighting all the colored dragons at once really is a design flaw, isn&#x27;t it...!!&quot;</p>
+<p>Damn you, Amachi Ritsu! Are you trying to turn ShanFro into a trash game too!?</p>
+<p>Like hell I&#x27;ll let you! Watching a game I&#x27;ve actually grown fond of go dead, grow stale, and vanish hurts, even if it&#x27;s a trash game. Out of sheer stubbornness, I&#x27;m going to win...!!</p>
+<p>As if answering that resolve, a streak of light tore through the night sky and struck Siegwurm&#x27;s head—more precisely, his horn—without missing by a single millimeter, just like the three shots before it.</p>
+<p>&#x27;Nuguu! Again...!&#x27;</p>
+<p>&quot;...Incredible accuracy.&quot;</p>
+<p>&quot;Well, if it&#x27;s &#x27;No Woods,&#x27; he can pull off that much easily...!&quot;</p>
+<p>I mean, this is the guy who could land headshots effortlessly even with a beat-up driftwood musket—if you let him use ship-mounted gear, of course this is what happens...!!</p>
+<p>◇</p>
+<p>&quot;Hmm... that one was forty points, huh, even though I was aiming for the same horn.&quot;</p>
+<p>Muttering under his breath. Yashiro Bird, giving himself a failing grade for his own shot, leaned against the firing platform while watching a new bolt form on the &quot;ballista,&quot; never taking his sharp eyes off the Golden Dragon King rampaging in the distance.</p>
+<p>&quot;Whoa... nice ship, Bryubas. I don&#x27;t really get the name, but the main cannon being a ballista is sick.&quot;</p>
+<p>The Sea-Conquering Ship &quot;Bryubas&quot; was, obviously, built for naval combat. Although its structure was clearly designed for close-quarters brawling—with an armored ramming horn at the bow and &quot;blade wings&quot; along both flanks for broadside passes—the ship was also equipped with a &quot;main cannon,&quot; as any proper warship should be.</p>
+<p>What had been mounted in the center of the deck was originally just an ordinary crossbow, but thanks to the &quot;Investor&quot; supplying enough Lapisteria Star Crystals to buy an entire city, the ship had been modified into something far beyond a mere kinetic launcher.</p>
+<p>───Its name was the Type Six Ballista (Lepnorca).</p>
+<p>It could be called a high-output shipboard magic bow that formed bolts from the mana supplied by Lapisteria Star Crystals and fired them with tremendous force.</p>
+<p>...As a side note, the name up to &quot;ballista&quot; was given by its builder Norman, while the name &quot;Lepnorca&quot; was Sunraku&#x27;s doing.</p>
+<p>&quot;Man, when there are this many tanks, it&#x27;s super easy to hit—nice.&quot;</p>
+<p>&quot;W-why is there a ship in a place like this...? Is this yours?&quot;</p>
+<p>&quot;Can we operate it too!?&quot;</p>
+<p>Players climbing onto the deck, just like Yashiro Bird had done moments ago, peppered Yashiro Bird—acting as the ship&#x27;s crew—with questions.</p>
+<p>&quot;Ah—this belongs to someone else, actually. I can use it because I&#x27;m in their party, but apparently if unrelated players keep boarding, their Karma value goes up for trespassing, so be careful, okay?&quot;</p>
+<p>&quot;Seriously!?&quot;</p>
+<p>&quot;Yikes. Uh, good luck with the support fire!!&quot;</p>
+<p>&quot;Thanks, thanks~&quot;</p>
+<p>That was a lie. In the first place, Karma value was a hidden stat, so there was no way to tell here whether it actually went up or not. Still, if you say it with enough confidence, people fall for it.</p>
+<p>Accepting their cheers without a shred of guilt, Yashiro Bird narrowed his eyes as he fine-tuned the newly reloaded ballista using its steering lever.</p>
+<p>&quot;If I can, I&#x27;d like to shoot down at least one... yeah...!&quot;</p>
+<p>The bolt he loosed streaked across the battlefield...</p>
+<p>◆</p>
+<p>Streaking across the battlefield, I used Siegwurm&#x27;s knee as a stepping stone to climb even higher. I was a little envious of those light warriors casually walking on air, but with my base specs cranked up this high, if I carelessly reinforced my body I&#x27;d just launch myself into orbit. Even so, I still wanted air-walking...</p>
+<p>&#x27;How dare you try to climb onto my back! Too naive!!&#x27;</p>
+<p>&quot;Guwaa!?&quot;</p>
+<p>&quot;Dragon Ride failed!&quot;</p>
+<p>Players who had reached Siegwurm&#x27;s back faster than I could climb up on my own were blown away by a beat of his wings.</p>
+<p>But I&#x27;ve clawed my way up giant monsters to the death more times than I can count, so if you want to shake me off, you&#x27;d better start breakdancing first!!</p>
+<p>&quot;Hup.&quot;</p>
+<p>&#x27;You...!!&#x27;</p>
+<p>&quot;I&#x27;ll chop it like an axe!!&quot;</p>
+<p><i>Clang!!</i> The violet blade of Mukadeshiki 8-0.5 bounced off. Well, I&#x27;d only half-hoped it might snap in one swing... still, I caught a clear glimpse of it.</p>
+<p>&quot;A tiny crack, huh...!?&quot;</p>
+<p>&#x27;Nuaa!!&#x27;</p>
+<p>&quot;Whoa!&quot;</p>
+<p>Midair! Flung away! Twist the body! Land!!</p>
+<p>&quot;Still, rather than chipping away bit by bit, it&#x27;s easier to break if I force my way in close and smash it, huh...&quot;</p>
+<p>Though I didn&#x27;t think the same trick would work over and over. And because the battlefield was way too crowded, unlike tanks who could form a phalanx in a pinch, frontline attacker jobs always carried the risk of colliding with each other.</p>
+<p>Just as I briefly thought how nice it&#x27;d be if Siegwurm&#x27;s breath or something wiped out everyone except me, the front line actually did get vaporized by his breath—only for me to realize a few minutes later that those players couldn&#x27;t die anyway, so it wasn&#x27;t like I got any breathing room.</p>
+<p>And right then—</p>
+<p>&#x27;As of this moment, we hereby confirm the subjugation of &quot;Bryleinyego the White Dragon.&quot; The final blow was dealt by the NPC &quot;Dilnadia the Unrivaled Dual-Blader (Mora Vegalta).&quot;&#x27;</p>
+<p>&quot;NPCs stealing the spotlight from players—pretty standard, right... wait, that&#x27;s not the point!!&quot;</p>
+<p>&quot;Bryleinyego&#x27;s dead? Hold on—Eldranza died right at the start, Deuredhow&#x27;s dead, Bryleinyego&#x27;s dead... all that&#x27;s left are Blockentreed and Noirlind?&quot;</p>
+<p>&quot;Oi, oi, oi, are we actually gonna pull this off...!&quot;</p>
+<p>Only two colored dragons left. No matter how absurd its durability was, Blockentreed had been fighting since the very start of the decisive phase, and even if it hadn&#x27;t entered Hazard Mode yet, it could go down at any second.</p>
+<p>More importantly, the fact that Bryleinyego—who spawned lesser dragons in massive numbers—was already dead was seriously bad news.</p>
+<p>&quot;Are the production jobs actually going to show up...!!&quot;</p>
+<p>...You&#x27;ve got to be kidding me.</p>
+<p>It was almost time. To be completely honest, whatever happened from here on out was definitely going to leave behind some grudges. Still, everyone had already agreed to go through with it and I&#x27;d helped out plenty myself, so this wasn&#x27;t the time to hesitate. If things went south, I&#x27;d just defect to Rabbits!!</p>
+<p>Skull Azuchi-kun... let&#x27;s have ourselves a good old civil war. Backstabbing and dragging each other down is humanity&#x27;s specialty, after all.</p>
+<p>&#x27;Declaration of war accepted!!&#x27;</p>
+<p>&#x27;Bone Keep Skull Azuchi vs. One-Night Castle Sasorisnomata&#x27;</p>
+<p>&#x27;The Castle War begins now!!&#x27;</p>
+<hr>
+<p><i>[Author&#x27;s Note at the end of the chapter]</i></p>
+<p>&quot;A Castle War can be declared when &#x27;the resource values of both sides are roughly equal&#x27; or when &#x27;the resource values of the structures become roughly equal after adding the combined resource values of players belonging to the same party or clan as the structure&#x27;s owner&#x27; (undisclosed intel from the observer clan 【Library】).&quot;</p>
+<p>&quot;Sasorisnomata... how on earth did they gather enough resources to rival Skull Azuchi......&quot;</p>
+</div>
+<div class="wntl-lang" data-lang="jp" hidden>
+<p>えっ！？ 今日はパンゲア・ムーンでバラギアラ十九体のコストを踏み倒してもいいのか！？</p>
+<p>フィンブル落ちないので更新です</p>
+<p>◆</p>
+<p>ノースキル縛り自体は別にいい。問題はこれがソロじゃなくてレイド戦である事だ。</p>
+<p>ヘイトがあっちこっちに飛ぶもんだからジークヴルムが「俺」を見ているタイミングが掴みづらい。</p>
+<p>「月は……よし、まだ保つ(・・)」</p>
+<p>金晶戦衣(エグザイル・クロス)、各部位にはデフォルトで「月光を浴びる事でMPを蓄積する」機能が備わっている。</p>
+<p>瑠璃天(ラピステラ)の星外套はセットした魔法の使用にしか蓄積MPを使用できない縛りがあるが、こちらはその縛りがないので百足式8-0.5(ムカデシキタウゼント)のコストとして使うことが出来る。</p>
+<p>そして月光を浴びてさえいれば戦闘中でも常時MP補填が出来る、これがステータスMPが100以下の俺が今に至るまで百足式8-0.5の運用を続けていられる理由だ。</p>
+<p>「クッソ硬ぇ……サイガ姉！ 他の分身の様子は！？」</p>
+<p>「本体よりは攻撃の通りが良いらしいが、時間が時間だ……回復のために離脱した連中が戻ったとしても火力が足りん」</p>
+<p>「やっぱ色竜と同時戦闘は設計ミスだろ……！！」</p>
+<p>おのれ天地 律！ シャンフロまでをもクソゲーにするつもりか！？</p>
+<p>だがさせんぞ、それなりに愛着のあるゲームが寂れ廃れ消えていく様を見るのはクソゲーだとしても何気に辛いんだ。意地でも勝ってやるさ……！！</p>
+<p>その決意に同意するかのように夜空を割いて飛ぶ一筋の光が、これまで放たれた三発同様１ミリのズレなくジークヴルムの頭部、さらに言えば角に命中した。</p>
+<p>『ぬぐぅ！ またしてもか……！』</p>
+<p>「……凄まじい命中率だな」</p>
+<p>「ま、「密林抜き」ならそれくらいやってくれるさ……！」</p>
+<p>何せ漂流物のマスケットですらヘッドショットを余裕でかましてくる奴だ、艦載設備なんて使わせたら当然こうなるさ……！！</p>
+<p>◇</p>
+<p>「んー……今のは四十点かな、同じ角を狙ったんだけどなぁ」</p>
+<p>ポツリ、と。自身の射撃に対して赤点の評を下したヤシロバードは射座に背を預けながら「弩砲」に新たな矢が生成(・・)されるのを確認しつつ、彼方で暴れ回る黄金の龍王を油断なく視界に収める。</p>
+<p>「いやー……いい船だブリュバス、名前はよく分からないけど主砲がバリスタってところが渋い」</p>
+<p>征海船「ブリュバス」は当たり前だが水上での戦闘を前提として建造されている。実際真正面から体当たりするための武装衝角やすれ違う事を想定した船体左右の「刃翼」など、明らかに近接戦闘を想定した構造ではあるものの、戦う船として当たり前とも言える「主砲」もまた搭載されている。</p>
+<p>本来であれば単なる弩になるはずであった甲板上の中央に設置されたそれは、「出資者」が一都市を買収できかねないほどの量のラピステリア星晶体を提供した事で、単なる運動エネルギーの射出器以上の改造が施された。</p>
+<p>───その名も、六式魔導弩砲(タイプシックスバリスタ)『鯱光(レプノルカ)』。</p>
+<p>ラピステリア星晶体からの魔力供給によって矢を形成し、凄まじい威力で射出する艦載用大出力魔導弓とでも言うべき代物である。</p>
+<p>……余談だがバリスタ、までは製作者たるノーマンの命名で「鯱光」の名はサンラクの命名である。</p>
+<p>「いやー、タンクが多いと当てやすくて良いね」</p>
+<p>「な、なんでこんなところに船が……？ これ、あんたのなのか？」</p>
+<p>「俺たちでも操作できる！？」</p>
+<p>と、しばらく前のヤシロバードがそうしていたように甲板上へと乗り込んできたプレイヤー達が船員たるヤシロバードへと口々に問いかける。</p>
+<p>「あー、これは別の人の所有物だよ。パーティメンバーだから僕は使えてるけど、無関係のプレイヤーが乗り続けてると不法侵入でカルマ値上がるらしいから気をつけた方がいいよ？」</p>
+<p>「マジっ！？」</p>
+<p>「やっべ。あ、援護頑張ってください！！」</p>
+<p>「どもども〜」</p>
+<p>嘘である。そもそもカルマ値はマスクデータであって実際に上がっているかどうかなどこの場でわかるはずもない。だが自信満々に言い切られては人も騙されるというもの。</p>
+<p>エールを遠慮なく受け取りながらも、ヤシロバードは再装填が完了したバリスタをハンドルで微調整しながら目を細める。</p>
+<p>「どうせなら一本くらいは持っていきたいところ……だ………ねっ！」</p>
+<p>放たれた矢は、戦場を駆け抜けて……</p>
+<p>◆</p>
+<p>戦場を駆け抜けて、ジークヴルムの膝を踏み台にさらに上へと駆け上がる。気軽に空中歩行している軽戦士共が少しだけ羨ましいが、素のスペックが底上げされている以上は下手に身体強化するとそのままぶっ飛ばされかねない。いやでも空中歩行は欲しいなぁ……</p>
+<p>『我が背に乗り込まんとするか！ だが甘いわっ！！』</p>
+<p>「ぐわぁ！？」</p>
+<p>「ドラゴンライド失敗した！」</p>
+<p>セルフでクライミングする俺よりも早くジークヴルムの背にたどり着いたプレイヤー達が、翼のはためきによって吹き飛ばされている。</p>
+<p>だがこちとら巨大生物相手のよじ登りは死ぬ程(・・・)やり込んできたんだ、俺を引き剥がしたいならブレイクダンスでも踊るんだな！！</p>
+<p>「よう」</p>
+<p>『貴様……！！』</p>
+<p>「斧のように断ぁつ！！」</p>
+<p>ガィン！！ と百足式8-0.5の紫刃が弾かれる。まぁ一発で折れるなんて期待は少ししかしていないが……だが、しかと確認したぞ。</p>
+<p>「ちょっと欠けたなぁ……！？」</p>
+<p>『ぬぅあ！！』</p>
+<p>「うおっ！」</p>
+<p>空中！ 投げ出され！ 身を捻り！ 着地ィ！！</p>
+<p>「やっぱちまちま削るよか、意地でも近づいて殴った方が折りやすいよなぁ……」</p>
+<p>だが何度も同じ手が通じるとも思えない。それと戦場が密集し過ぎているが故に、いざって時は隊列を組めるタンクと違って、前衛火力職は衝突事故の危険性を常に背負っている。</p>
+<p>いっそジークヴルムのブレスか何かで俺以外一掃されてくれないものか、とか考えていたら本当に前衛がブレスで蒸発したが、なんやかんやプレイヤーは不死身なので俺が快適に動けるわけではないのだと数分して気づいた。</p>
+<p>と、そんな時だった。</p>
+<p>『現時刻を持ちまして、「白竜ブライレイニェゴ」の討伐を確認いたしました。ラストアタッカーはNPC「無双の双剣(モラ・ベガルタ)のディルナディア」です』</p>
+<p>NPCがプレイヤーより出しゃばるの、あるあるだよね……ではなくて！！</p>
+<p>ブライレイニェゴがくたばっただと？ 待て、エルドランザは最初からおっ死(ち)んでるし、ドゥーレッドハウルが死んでブライレイニェゴが死んで……残るはブロッケントリードとノワルリンドだけ？</p>
+<p>「おいおいおい、いけるのかこれ……！」</p>
+<p>色竜は残り二体、いくら耐久に優れているとしてもブロッケントリードは決戦フェーズの序盤から戦い通し、災害状態(ハザードモード)になっていないにせよいつ倒れてもおかしくはない。</p>
+<p>そして何より、雑魚モンスターを大量に生み出すブライレイニェゴが死んだという事実が非常にまずい。</p>
+<p>「来るのか生産職……！！」</p>
+<p>……なんてな。</p>
+<p>そろそろ機は熟した頃だ。正直に言おう、これから起きる出来事は確実に遺恨を残す。だがそれでもやると皆が決めて俺も少なからず助力をした、であれば最早躊躇ってうだうだ言ってる場合でもねぇ。ヤバくなったらラビッツに亡命だ！！</p>
+<p>スカルアヅチ君……やろうぜ内ゲバ、共食いと足の引っ張り合いは人間の十八番だからな。</p>
+<p>『宣戦布告が受理されました！！』</p>
+<p>『装骨天守スカルアヅチvs一夜城サソリスノマタ』</p>
+<p>『これより対城戦を開始します！！』</p>
+<p>対城戦は「双方のリソース値がほぼ同等」あるいは「双方の建築物の所有者と同じパーティor同じクランに属するプレイヤーの総リソース値を加算した建築物同士のリソース値がほぼ同等」の場合、宣戦布告が可能となる（考察クラン【ライブラリ】非公開情報）</p>
+<p>サソリスノマタ……一体どうやってスカルアヅチに匹敵するリソースを確保したんだ………</p>
+</div>
+</div></article>
+</div>
+<div id='dictPop' class='dict-pop' role='dialog' aria-label='Arti kata'>
+  <div class='dict-pop-head'><span id='dictPopWord' class='dict-pop-word'></span><span id='dictPopPos' class='dict-pop-pos'></span></div>
+  <div id='dictPopReading' class='dict-pop-reading'></div>
+  <div id='dictPopMeaning' class='dict-pop-meaning'></div>
+  <div class='dict-pop-foot'><span id='dictPopSrc'></span><span>Kamus: JMdict (EDRDG) · CC BY-SA</span></div>
+</div>
+<script>
+//<![CDATA[
+(function(){
+    var $ = function(s){ return document.querySelector(s); };
+    var $$ = function(s){ return Array.prototype.slice.call(document.querySelectorAll(s)); };
+    function lsGet(k, d){ try { var v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } }
+    function lsSet(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+    var body = $('#chapterBody');
+/* ---------- mode bahasa halaman baca ---------- */
+      var langPanel = $('#langPanel');
+      var chapterBody = body;
+      if (langPanel && chapterBody){
+        var LANGS = ['id', 'en', 'jp'];
+        var LANG_LABEL = { id: 'Indonesia', en: 'English', jp: 'Jepang' };
+        /* Bungkus konten Indonesia (anak langsung #chapterBody di luar .wntl-lang)
+           ke container data-lang="id" agar ketiga bahasa jadi container seragam. */
+        var idWrap = document.createElement('div');
+        idWrap.className = 'wntl-lang';
+        idWrap.setAttribute('data-lang', 'id');
+        var toWrap = [];
+        Array.prototype.slice.call(chapterBody.childNodes).forEach(function(n){
+          if (n.nodeType === 1 && n.classList && n.classList.contains('wntl-lang')) return;
+          toWrap.push(n);
+        });
+        toWrap.forEach(function(n){ idWrap.appendChild(n); });
+        chapterBody.insertBefore(idWrap, chapterBody.firstChild);
+        /* Urutan container bahasa di DOM (untuk pemulihan). */
+        var langDomOrder = [];
+        Array.prototype.slice.call(chapterBody.children).forEach(function(el){
+          if (el.classList && el.classList.contains('wntl-lang')) langDomOrder.push(el);
+        });
+        /* Deteksi bahasa yang tersedia (div ada dan berisi teks). */
+        var langEls = {}, langBlocks = {}, langAvail = {};
+        LANGS.forEach(function(l){
+          var el = chapterBody.querySelector('.wntl-lang[data-lang="' + l + '"]');
+          if (el){
+            langEls[l] = el;
+            langBlocks[l] = Array.prototype.slice.call(el.children);
+            langAvail[l] = el.textContent.replace(/\s+/g, '').length > 0;
+          } else {
+            langAvail[l] = false;
+          }
+        });
+        /* State tersimpan (kunci 'wntl-lang'). */
+        var langSaved = lsGet('wntl-lang', null) || {};
+        var langMode = (langSaved.mode === 'en' || langSaved.mode === 'jp' || langSaved.mode === 'combo') ? langSaved.mode : 'id';
+        var langPick = Array.isArray(langSaved.pick) ? langSaved.pick.filter(function(l){ return LANGS.indexOf(l) !== -1; }) : ['id'];
+        langPick = langPick.filter(function(l){ return langAvail[l]; });
+        if (!langPick.length) langPick = ['id'];
+        var langView = (langSaved.view === 'side') ? 'side' : 'interleave';
+        function langSave(){ lsSet('wntl-lang', { mode: langMode, pick: langPick, view: langView }); }
+        function langRestore(){
+          /* Kembalikan semua blok ke container asalnya, lalu hapus wrapper gabungan. */
+          LANGS.forEach(function(l){
+            var el = langEls[l]; if (!el) return;
+            langBlocks[l].forEach(function(b){ el.appendChild(b); });
+          });
+          $$('#chapterBody .lang-side').forEach(function(g){
+            while (g.firstChild){ chapterBody.insertBefore(g.firstChild, g); }
+            if (g.parentNode) g.parentNode.removeChild(g);
+          });
+          $$('#chapterBody .lang-pair').forEach(function(w){
+            if (w.parentNode) w.parentNode.removeChild(w);
+          });
+          langDomOrder.forEach(function(el){ chapterBody.appendChild(el); });
+          LANGS.forEach(function(l){ if (langEls[l]) langEls[l].removeAttribute('hidden'); });
+        }
+        function langTag(l){
+          var t = document.createElement('span');
+          t.className = 'lang-tag';
+          t.textContent = l.toUpperCase();
+          return t;
+        }
+        function langRender(){
+          langRestore();
+          if (langMode !== 'combo' && !langAvail[langMode]){ langMode = 'id'; langSave(); }
+          var picked;
+          if (langMode === 'combo'){
+            picked = langPick.filter(function(l){ return langAvail[l]; });
+          } else {
+            picked = langAvail[langMode] ? [langMode] : ['id'];
+          }
+          if (!picked.length) picked = ['id'];
+          if (langMode === 'combo' && picked.length > 1){
+            if (langView === 'side'){
+              var grid = document.createElement('div');
+              grid.className = 'lang-side cols-' + picked.length;
+              picked.forEach(function(l){ grid.appendChild(langEls[l]); });
+              chapterBody.appendChild(grid);
+              LANGS.forEach(function(l){
+                if (picked.indexOf(l) === -1 && langEls[l]) langEls[l].setAttribute('hidden', '');
+              });
+            } else {
+              var minLen = Math.min.apply(null, picked.map(function(l){ return langBlocks[l].length; }));
+              var frag = document.createDocumentFragment();
+              var i, j, pair;
+              for (i = 0; i < minLen; i++){
+                pair = document.createElement('div');
+                pair.className = 'lang-pair';
+                picked.forEach(function(l2){
+                  pair.appendChild(langTag(l2));
+                  pair.appendChild(langBlocks[l2][i]);
+                });
+                frag.appendChild(pair);
+              }
+              picked.forEach(function(l2){
+                for (j = minLen; j < langBlocks[l2].length; j++){
+                  pair = document.createElement('div');
+                  pair.className = 'lang-pair';
+                  pair.appendChild(langTag(l2));
+                  pair.appendChild(langBlocks[l2][j]);
+                  frag.appendChild(pair);
+                }
+              });
+              chapterBody.appendChild(frag);
+              LANGS.forEach(function(l2){ if (langEls[l2]) langEls[l2].setAttribute('hidden', ''); });
+            }
+          } else {
+            var single = picked[0];
+            LANGS.forEach(function(l){
+              if (!langEls[l]) return;
+              if (l === single) langEls[l].removeAttribute('hidden');
+              else langEls[l].setAttribute('hidden', '');
+            });
+          }
+          if (typeof romajiAfterRender === 'function') romajiAfterRender(picked);
+          langPaint();
+        }
+        function langPaint(){
+          $$('#langPanel [data-langmode]').forEach(function(b){
+            var m = b.getAttribute('data-langmode');
+            b.classList.toggle('on', m === langMode);
+            if (m !== 'combo') b.disabled = !langAvail[m];
+          });
+          var comboRow = $('#langCombo');
+          if (comboRow) comboRow.hidden = (langMode !== 'combo');
+          $$('#langPanel [data-langpick]').forEach(function(b){
+            var l = b.getAttribute('data-langpick');
+            b.classList.toggle('on', langPick.indexOf(l) !== -1);
+            b.disabled = !langAvail[l];
+          });
+          $$('#langPanel [data-langview]').forEach(function(b){
+            b.classList.toggle('on', b.getAttribute('data-langview') === langView);
+          });
+          var note = $('#langNote');
+          var missing = LANGS.filter(function(l){ return !langAvail[l]; }).map(function(l){ return LANG_LABEL[l]; });
+          if (note){
+            if (missing.length){
+              note.textContent = missing.join(' dan ') + ' belum tersedia untuk bab ini.';
+              note.hidden = false;
+            } else {
+              note.hidden = true;
+            }
+          }
+        }
+        $$('#langPanel [data-langmode]').forEach(function(b){
+          b.addEventListener('click', function(){
+            var m = b.getAttribute('data-langmode');
+            if (m !== 'combo' && !langAvail[m]) return;
+            langMode = m;
+            langSave(); langRender();
+          });
+        });
+        $$('#langPanel [data-langpick]').forEach(function(b){
+          b.addEventListener('click', function(){
+            var l = b.getAttribute('data-langpick');
+            if (!langAvail[l]) return;
+            var i = langPick.indexOf(l);
+            if (i === -1) langPick.push(l); else langPick.splice(i, 1);
+            if (!langPick.length) langPick = ['id'];
+            langPick.sort(function(a, b){ return LANGS.indexOf(a) - LANGS.indexOf(b); });
+            langSave(); langRender();
+          });
+        });
+        $$('#langPanel [data-langview]').forEach(function(b){
+          b.addEventListener('click', function(){
+            langView = b.getAttribute('data-langview');
+            langSave(); langRender();
+          });
+        });
+
+        /* ---------- romaji untuk teks Jepang (kuromoji via Web Worker) ----------
+           Bawaan: mati. Kamus 18 MB hanya diunduh saat pembaca menyalakan Romaji.
+           Gaya bawaan: 'kanji' (romaji hanya di atas kata berkanji). */
+        var romajiSaved = lsGet('wntl-romaji', null) || {};
+        var romajiOn = romajiSaved.on === true;
+        var romajiStyle = romajiSaved.style === 'all' ? 'all' : 'kanji';
+        var romajiRow = $('#romajiRow');
+        var romajiStatusEl = $('#romajiStatus');
+        var jpBlocksR = langAvail['jp'] ? langBlocks['jp'].slice() : [];
+        var jpOriginalR = jpBlocksR.map(function(el){ return el.innerHTML; });
+        var romajiTokens = {};
+        var romajiReady = false, romajiApplied = false, romajiEngineStarted = false, romajiJpShown = false;
+        function romajiSave(){ lsSet('wntl-romaji', { on: romajiOn, style: romajiStyle }); }
+        function romajiSetStatus(t){ if (romajiStatusEl) romajiStatusEl.textContent = t; }
+        function romajiPaint(){
+          $$('#romajiRow [data-romaji]').forEach(function(btn){
+            btn.classList.toggle('on', (btn.getAttribute('data-romaji') === 'on') === romajiOn);
+          });
+          $$('#romajiRow [data-romajistyle]').forEach(function(btn){
+            btn.classList.toggle('on', btn.getAttribute('data-romajistyle') === romajiStyle);
+            btn.disabled = !romajiOn;
+          });
+          if (!romajiOn) romajiSetStatus('');
+          else if (romajiReady) romajiSetStatus('Kamus aktif');
+        }
+        function romajiJpText(i){ var d = document.createElement('div'); d.innerHTML = jpOriginalR[i]; return d.textContent; }
+        function romajiBuildParagraph(p, idx){
+          var tokens = romajiTokens[idx]; if (!tokens) return;
+          var frag = document.createDocumentFragment();
+          tokens.forEach(function(tok){
+            var surf = tok.surface_form; if (!surf) return;
+            if (RJ_IS_PUNCT.test(surf) || !RJ_HAS_JP.test(surf)){ frag.appendChild(document.createTextNode(surf)); return; }
+            var reading = romajiTokenReading(tok);
+            splitOkurigana(surf, reading).forEach(function(part){
+              if (romajiStyle === 'kanji' && !RJ_HAS_KANJI.test(part.text)){
+                frag.appendChild(document.createTextNode(part.text));
+              } else {
+                var ruby = document.createElement('ruby');
+                ruby.dataset.surface = tok.surface_form;
+                ruby.dataset.basic = (tok.basic_form && tok.basic_form !== '*') ? tok.basic_form : tok.surface_form;
+                ruby.dataset.reading = reading;
+                ruby.dataset.pos = tok.pos || '';
+                var rb = document.createElement('rb'); rb.textContent = part.text;
+                var rt = document.createElement('rt'); rt.textContent = kanaToRomaji(part.reading, true);
+                ruby.appendChild(rb); ruby.appendChild(rt);
+                frag.appendChild(ruby);
+              }
+            });
+          });
+          p.innerHTML = ''; p.appendChild(frag); p.classList.add('rj-on');
+        }
+        function romajiApply(){
+          if (!romajiReady) return;
+          jpBlocksR.forEach(function(p, i){ romajiBuildParagraph(p, i); });
+          romajiApplied = true;
+        }
+        function romajiRestore(){
+          if (!romajiApplied) return;
+          jpBlocksR.forEach(function(p, i){ p.innerHTML = jpOriginalR[i]; p.classList.remove('rj-on'); });
+          romajiApplied = false;
+        }
+        function romajiAfterRender(picked){
+          romajiJpShown = !!langAvail['jp'] && picked.indexOf('jp') !== -1;
+          if (romajiRow) romajiRow.hidden = !romajiJpShown;
+          if (!romajiJpShown) return;
+          if (romajiOn){ romajiEnsureEngine(); romajiApply(); }
+          else romajiRestore();
+          romajiPaint();
+        }
+        function romajiTokenReading(tok){
+          var surf = tok.surface_form;
+          if (tok.pos === '\u52a9\u8a5e'){ if (surf === '\u306f') return '\u30ef'; if (surf === '\u3078') return '\u30a8'; if (surf === '\u3092') return '\u30aa'; }
+          if (tok.reading && tok.reading !== '*') return tok.reading;
+          return toKatakana(surf);
+        }
+        var RJ_HAS_KANJI = /[\u4E00-\u9FFF\u3400-\u4DBF\u3005]/;
+        var RJ_HAS_JP = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF\u3400-\u4DBF\u3005]/;
+        var RJ_IS_PUNCT = /^[\s\u3000\u3001\u3002\uFF01\uFF1F\u30FB\uFF08\uFF09\u300C\u300D\u300E\u300F\uFF3B\uFF3D\uFF5B\uFF5D\u30FB\u2010-\u2015\u30FC\u2026\uFF0C\uFF0E\uFF1A\uFF1B\u0022\u0027\uFF02\uFF07\uFF1C\uFF1E\u226A\u226B\u25C6\u2605\u2606\u266A\uFF0D\u30FC\u2015\uFF3F_\uFF5E~\uFF65]+$/;
+const DIGRAPHS = {
+        'キャ': 'kya', 'キュ': 'kyu', 'キョ': 'kyo',
+        'シャ': 'sha', 'シュ': 'shu', 'ショ': 'sho',
+        'チャ': 'cha', 'チュ': 'chu', 'チョ': 'cho',
+        'ニャ': 'nya', 'ニュ': 'nyu', 'ニョ': 'nyo',
+        'ヒャ': 'hya', 'ヒュ': 'hyu', 'ヒョ': 'hyo',
+        'ミャ': 'mya', 'ミュ': 'myu', 'ミョ': 'myo',
+        'リャ': 'rya', 'リュ': 'ryu', 'リョ': 'ryo',
+        'ギャ': 'gya', 'ギュ': 'gyu', 'ギョ': 'gyo',
+        'ジャ': 'ja',  'ジュ': 'ju',  'ジョ': 'jo',
+        'ビャ': 'bya', 'ビュ': 'byu', 'ビョ': 'byo',
+        'ピャ': 'pya', 'ピュ': 'pyu', 'ピョ': 'pyo',
+        'ティ': 'ti',  'ディ': 'di',  'デュ': 'du',
+        'ファ': 'fa',  'フィ': 'fi',  'フェ': 'fe',  'フォ': 'fo',
+        'ウィ': 'wi',  'ウェ': 'we',  'ウォ': 'wo',
+        'ヴァ': 'va',  'ヴィ': 'vi',  'ヴェ': 've',  'ヴォ': 'vo',
+        'シェ': 'she', 'ジェ': 'je',  'チェ': 'che',
+        'ツァ': 'tsa', 'ツィ': 'tsi', 'ツェ': 'tse', 'ツォ': 'tso'
+      };
+
+      const MONOGRAPHS = {
+        'ア': 'a',  'イ': 'i',  'ウ': 'u',  'エ': 'e',  'オ': 'o',
+        'カ': 'ka', 'キ': 'ki', 'ク': 'ku', 'ケ': 'ke', 'コ': 'ko',
+        'サ': 'sa', 'シ': 'shi','ス': 'su', 'セ': 'se', 'ソ': 'so',
+        'タ': 'ta', 'チ': 'chi','ツ': 'tsu','テ': 'te', 'ト': 'to',
+        'ナ': 'na', 'ニ': 'ni', 'ヌ': 'nu', 'ネ': 'ne', 'ノ': 'no',
+        'ハ': 'ha', 'ヒ': 'hi', 'フ': 'fu', 'ヘ': 'he', 'ホ': 'ho',
+        'マ': 'ma', 'ミ': 'mi', 'ム': 'mu', 'メ': 'me', 'モ': 'mo',
+        'ヤ': 'ya', 'ユ': 'yu', 'ヨ': 'yo',
+        'ラ': 'ra', 'リ': 'ri', 'ル': 'ru', 'レ': 're', 'ロ': 'ro',
+        'ワ': 'wa', 'ヲ': 'o',  'ン': 'n',
+        'ガ': 'ga', 'ギ': 'gi', 'グ': 'gu', 'ゲ': 'ge', 'ゴ': 'go',
+        'ザ': 'za', 'ジ': 'ji', 'ズ': 'zu', 'ゼ': 'ze', 'ゾ': 'zo',
+        'ダ': 'da', 'ヂ': 'ji', 'ヅ': 'zu', 'デ': 'de', 'ド': 'do',
+        'バ': 'ba', 'ビ': 'bi', 'ブ': 'bu', 'ベ': 'be', 'ボ': 'bo',
+        'パ': 'pa', 'ピ': 'pi', 'プ': 'pu', 'ペ': 'pe', 'ポ': 'po',
+        'ヴ': 'vu',
+        'ァ': 'a',  'ィ': 'i',  'ゥ': 'u',  'ェ': 'e',  'ォ': 'o',
+        'ャ': 'ya', 'ュ': 'yu', 'ョ': 'yo'
+      };
+
+      function toKatakana(str) {
+        return str.replace(/[\u3041-\u3096]/g, function (ch) {
+          return String.fromCharCode(ch.charCodeAt(0) + 0x60);
+        });
+      }
+
+      function kanaToRomaji(kana, useMacron) {
+        const kata = toKatakana(kana);
+        let out = '';
+        let i = 0;
+
+        while (i < kata.length) {
+          const ch = kata[i];
+          const next = kata[i + 1] || '';
+
+          if (ch === 'ッ') {
+            if (next) {
+              const pair = kata.slice(i + 1, i + 3);
+              const nextRomaji = DIGRAPHS[pair] || MONOGRAPHS[next] || '';
+              if (nextRomaji) {
+                out += nextRomaji.startsWith('ch') ? 't' : nextRomaji[0];
+                i += 1;
+                continue;
+              }
+            }
+            i += 1;
+            continue;
+          }
+
+          if (ch === 'ー' && out.length > 0) {
+            const last = out[out.length - 1];
+            if (useMacron) {
+              const map = { a: 'ā', i: 'ī', u: 'ū', e: 'ē', o: 'ō' };
+              if (map[last]) out = out.slice(0, -1) + map[last];
+            } else {
+              if ('aiueo'.includes(last)) out += last;
+            }
+            i += 1;
+            continue;
+          }
+
+          const two = kata.slice(i, i + 2);
+          if (DIGRAPHS[two]) {
+            out += DIGRAPHS[two];
+            i += 2;
+            continue;
+          }
+
+          if (ch === 'ン') {
+            const nextRom = DIGRAPHS[kata.slice(i + 1, i + 3)] || MONOGRAPHS[next] || '';
+            if (nextRom && /^[aiueoy]/.test(nextRom)) {
+              out += "n'";
+            } else {
+              out += 'n';
+            }
+            i += 1;
+            continue;
+          }
+
+          if (MONOGRAPHS[ch]) {
+            out += MONOGRAPHS[ch];
+          } else {
+            out += ch;
+          }
+          i += 1;
+        }
+
+        if (useMacron) {
+          out = out
+            .replace(/ou/g, 'ō')
+            .replace(/oo/g, 'ō')
+            .replace(/uu/g, 'ū');
+        }
+        return out;
+      }
+
+      const FALLBACK_WORDS = {
+        '今日': 'キョウ', '天気': 'テンキ', '東京': 'トウキョウ', '図書館': 'トショカン',
+        '日本語': 'ニホンゴ', '勉強': 'ベンキョウ', '桜': 'サクラ', '花': 'ハナ',
+        '季節': 'キセツ', '京都': 'キョウト', '明日': 'アシタ', '朝': 'アサ',
+        '駅': 'エキ', '前': 'マエ', '一期一会': 'イチゴイチエ', '心': 'ココロ',
+        '大切': 'タイセツ', '毎日': 'マイニチ', '少': 'スコ', '成長': 'セイチョウ'
+      };
+
+      const HAS_KANJI_OR_KANA = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\u3400-\u4DBF々ヶ]/;
+      const IS_KANA_ONLY = /^[\u3040-\u309F\u30A0-\u30FFー]+$/;
+      const IS_PUNCT = /^[\s、。！？「」『』（）(),.!?:;・〜\-]+$/;
+
+      function splitOkurigana(surface, readingKata) {
+        if (!surface || !readingKata || IS_KANA_ONLY.test(surface)) {
+          return [{ text: surface, reading: readingKata, isJapanese: HAS_KANJI_OR_KANA.test(surface) }];
+        }
+        const surfKata = toKatakana(surface);
+        let suffixLen = 0;
+        while (
+          suffixLen < surfKata.length &&
+          suffixLen < readingKata.length &&
+          IS_KANA_ONLY.test(surfKata[surfKata.length - 1 - suffixLen]) &&
+          surfKata[surfKata.length - 1 - suffixLen] === readingKata[readingKata.length - 1 - suffixLen]
+        ) {
+          suffixLen++;
+        }
+        if (suffixLen > 0 && suffixLen < surface.length) {
+          const stem = surface.slice(0, surface.length - suffixLen);
+          const stemRead = readingKata.slice(0, readingKata.length - suffixLen);
+          const okuri = surface.slice(surface.length - suffixLen);
+          const okuriRead = readingKata.slice(readingKata.length - suffixLen);
+          return [
+            { text: stem, reading: stemRead, isJapanese: true },
+            { text: okuri, reading: okuriRead, isJapanese: true }
+          ];
+        }
+        return [{ text: surface, reading: readingKata, isJapanese: true }];
+      }
+        function romajiPatchXhr(){
+          if (window.__wntlXhrPatched) return; window.__wntlXhrPatched = true;
+          var orig = XMLHttpRequest.prototype.open;
+          XMLHttpRequest.prototype.open = function(method, url){
+            if (typeof url === 'string'){
+              if (url.indexOf('https:/') === 0 && url.indexOf('https://') !== 0) url = 'https://' + url.slice(7);
+              else if (url.indexOf('http:/') === 0 && url.indexOf('http://') !== 0) url = 'http://' + url.slice(6);
+            }
+            var args = Array.prototype.slice.call(arguments, 2);
+            return orig.apply(this, [method, url].concat(args));
+          };
+        }
+        var romajiMainStarted = false;
+        function romajiLoadMain(dicUrl){
+          if (romajiMainStarted && !dicUrl) return; romajiMainStarted = true;
+          romajiPatchXhr();
+          var dictPath = dicUrl || 'https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/';
+          function build(){
+            kuromoji.builder({ dicPath: dictPath }).build(function(err, tok){
+              if (err || !tok){
+                if (!dicUrl){ romajiLoadMain('https://unpkg.com/kuromoji@0.1.2/dict/'); return; }
+                romajiSetStatus('Kamus gagal dimuat'); return;
+              }
+              jpBlocksR.forEach(function(p, i){ romajiTokens[i] = tok.tokenize(romajiJpText(i)); });
+              romajiReady = true; romajiApply(); romajiPaint();
+            });
+          }
+          if (typeof kuromoji !== 'undefined'){ build(); return; }
+          var s = document.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js';
+          s.onload = build;
+          s.onerror = function(){ romajiSetStatus('Kamus gagal dimuat'); };
+          document.head.appendChild(s);
+        }
+        function romajiEnsureEngine(){
+          if (romajiEngineStarted || !jpBlocksR.length) return;
+          romajiEngineStarted = true;
+          romajiSetStatus('Memuat kamus\u2026');
+          if (typeof Worker === 'undefined' || typeof Blob === 'undefined'){ romajiLoadMain(); return; }
+          var workerCode = [
+            'if (typeof window === "undefined") { self.window = self; }',
+            'var origOpen = XMLHttpRequest.prototype.open;',
+            'XMLHttpRequest.prototype.open = function(method, url) {',
+            '  if (typeof url === "string") {',
+            '    if (url.indexOf("https:/") === 0 && url.indexOf("https://") !== 0) { url = "https://" + url.slice(7); }',
+            '    else if (url.indexOf("http:/") === 0 && url.indexOf("http://") !== 0) { url = "http://" + url.slice(6); }',
+            '  }',
+            '  var args = Array.prototype.slice.call(arguments, 2);',
+            '  return origOpen.apply(this, [method, url].concat(args));',
+            '};',
+            'try { importScripts("https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js"); } catch (e) { self.postMessage({ type: "error", message: "importScripts failed" }); }',
+            'var tokenizer = null;',
+            'if (typeof kuromoji !== "undefined") {',
+            '  kuromoji.builder({ dicPath: "https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/" }).build(function(err, tok) {',
+            '    if (err || !tok) { self.postMessage({ type: "error", message: "build failed" }); return; }',
+            '    tokenizer = tok; self.postMessage({ type: "ready" });',
+            '  });',
+            '}',
+            'self.onmessage = function(e) {',
+            '  if (!tokenizer || !e.data || e.data.type !== "tokenize") return;',
+            '  var lines = e.data.lines || []; var results = [];',
+            '  for (var i = 0; i < lines.length; i++) { results[i] = tokenizer.tokenize(lines[i]).map(function(t) { return { surface_form: t.surface_form, reading: t.reading, basic_form: t.basic_form, pos: t.pos }; }); }',
+            '  self.postMessage({ type: "tokens", id: e.data.id, results: results });',
+            '};'
+          ].join('\n');
+          try {
+            var blob = new Blob([workerCode], { type: 'application/javascript' });
+            var wurl = URL.createObjectURL(blob);
+            var wk = new Worker(wurl); URL.revokeObjectURL(wurl);
+            var watchdog = setTimeout(function(){ if (!romajiReady){ try { wk.terminate(); } catch(e){} romajiLoadMain(); } }, 8000);
+            wk.onmessage = function(e){
+              var msg = e.data; if (!msg) return;
+              if (msg.type === 'ready'){
+                var lines = jpBlocksR.map(function(p, i){ return romajiJpText(i); });
+                wk.postMessage({ type: 'tokenize', id: 1, lines: lines });
+              } else if (msg.type === 'tokens' && msg.results){
+                clearTimeout(watchdog);
+                msg.results.forEach(function(r, i){ romajiTokens[i] = r; });
+                romajiReady = true; romajiApply(); romajiPaint();
+              } else if (msg.type === 'error'){
+                clearTimeout(watchdog); romajiLoadMain();
+              }
+            };
+            wk.onerror = function(){ clearTimeout(watchdog); romajiLoadMain(); };
+          } catch(e){ romajiLoadMain(); }
+        }
+        $$('#romajiRow [data-romaji]').forEach(function(btn){
+          btn.addEventListener('click', function(){
+            romajiOn = btn.getAttribute('data-romaji') === 'on';
+            romajiSave();
+            if (romajiOn){ romajiEnsureEngine(); romajiApply(); }
+            else romajiRestore();
+            romajiPaint();
+          });
+        });
+        $$('#romajiRow [data-romajistyle]').forEach(function(btn){
+          btn.addEventListener('click', function(){
+            romajiStyle = btn.getAttribute('data-romajistyle');
+            romajiSave();
+            if (romajiOn) romajiApply();
+            romajiPaint();
+          });
+        });
+        romajiPaint();
+        langPanel.hidden = false;
+        langRender();
+      }
+})();
+const DIGRAPHS = {
+        'キャ': 'kya', 'キュ': 'kyu', 'キョ': 'kyo',
+        'シャ': 'sha', 'シュ': 'shu', 'ショ': 'sho',
+        'チャ': 'cha', 'チュ': 'chu', 'チョ': 'cho',
+        'ニャ': 'nya', 'ニュ': 'nyu', 'ニョ': 'nyo',
+        'ヒャ': 'hya', 'ヒュ': 'hyu', 'ヒョ': 'hyo',
+        'ミャ': 'mya', 'ミュ': 'myu', 'ミョ': 'myo',
+        'リャ': 'rya', 'リュ': 'ryu', 'リョ': 'ryo',
+        'ギャ': 'gya', 'ギュ': 'gyu', 'ギョ': 'gyo',
+        'ジャ': 'ja',  'ジュ': 'ju',  'ジョ': 'jo',
+        'ビャ': 'bya', 'ビュ': 'byu', 'ビョ': 'byo',
+        'ピャ': 'pya', 'ピュ': 'pyu', 'ピョ': 'pyo',
+        'ティ': 'ti',  'ディ': 'di',  'デュ': 'du',
+        'ファ': 'fa',  'フィ': 'fi',  'フェ': 'fe',  'フォ': 'fo',
+        'ウィ': 'wi',  'ウェ': 'we',  'ウォ': 'wo',
+        'ヴァ': 'va',  'ヴィ': 'vi',  'ヴェ': 've',  'ヴォ': 'vo',
+        'シェ': 'she', 'ジェ': 'je',  'チェ': 'che',
+        'ツァ': 'tsa', 'ツィ': 'tsi', 'ツェ': 'tse', 'ツォ': 'tso'
+      };
+
+      const MONOGRAPHS = {
+        'ア': 'a',  'イ': 'i',  'ウ': 'u',  'エ': 'e',  'オ': 'o',
+        'カ': 'ka', 'キ': 'ki', 'ク': 'ku', 'ケ': 'ke', 'コ': 'ko',
+        'サ': 'sa', 'シ': 'shi','ス': 'su', 'セ': 'se', 'ソ': 'so',
+        'タ': 'ta', 'チ': 'chi','ツ': 'tsu','テ': 'te', 'ト': 'to',
+        'ナ': 'na', 'ニ': 'ni', 'ヌ': 'nu', 'ネ': 'ne', 'ノ': 'no',
+        'ハ': 'ha', 'ヒ': 'hi', 'フ': 'fu', 'ヘ': 'he', 'ホ': 'ho',
+        'マ': 'ma', 'ミ': 'mi', 'ム': 'mu', 'メ': 'me', 'モ': 'mo',
+        'ヤ': 'ya', 'ユ': 'yu', 'ヨ': 'yo',
+        'ラ': 'ra', 'リ': 'ri', 'ル': 'ru', 'レ': 're', 'ロ': 'ro',
+        'ワ': 'wa', 'ヲ': 'o',  'ン': 'n',
+        'ガ': 'ga', 'ギ': 'gi', 'グ': 'gu', 'ゲ': 'ge', 'ゴ': 'go',
+        'ザ': 'za', 'ジ': 'ji', 'ズ': 'zu', 'ゼ': 'ze', 'ゾ': 'zo',
+        'ダ': 'da', 'ヂ': 'ji', 'ヅ': 'zu', 'デ': 'de', 'ド': 'do',
+        'バ': 'ba', 'ビ': 'bi', 'ブ': 'bu', 'ベ': 'be', 'ボ': 'bo',
+        'パ': 'pa', 'ピ': 'pi', 'プ': 'pu', 'ペ': 'pe', 'ポ': 'po',
+        'ヴ': 'vu',
+        'ァ': 'a',  'ィ': 'i',  'ゥ': 'u',  'ェ': 'e',  'ォ': 'o',
+        'ャ': 'ya', 'ュ': 'yu', 'ョ': 'yo'
+      };
+
+      function toKatakana(str) {
+        return str.replace(/[\u3041-\u3096]/g, function (ch) {
+          return String.fromCharCode(ch.charCodeAt(0) + 0x60);
+        });
+      }
+
+      function kanaToRomaji(kana, useMacron) {
+        const kata = toKatakana(kana);
+        let out = '';
+        let i = 0;
+
+        while (i < kata.length) {
+          const ch = kata[i];
+          const next = kata[i + 1] || '';
+
+          if (ch === 'ッ') {
+            if (next) {
+              const pair = kata.slice(i + 1, i + 3);
+              const nextRomaji = DIGRAPHS[pair] || MONOGRAPHS[next] || '';
+              if (nextRomaji) {
+                out += nextRomaji.startsWith('ch') ? 't' : nextRomaji[0];
+                i += 1;
+                continue;
+              }
+            }
+            i += 1;
+            continue;
+          }
+
+          if (ch === 'ー' && out.length > 0) {
+            const last = out[out.length - 1];
+            if (useMacron) {
+              const map = { a: 'ā', i: 'ī', u: 'ū', e: 'ē', o: 'ō' };
+              if (map[last]) out = out.slice(0, -1) + map[last];
+            } else {
+              if ('aiueo'.includes(last)) out += last;
+            }
+            i += 1;
+            continue;
+          }
+
+          const two = kata.slice(i, i + 2);
+          if (DIGRAPHS[two]) {
+            out += DIGRAPHS[two];
+            i += 2;
+            continue;
+          }
+
+          if (ch === 'ン') {
+            const nextRom = DIGRAPHS[kata.slice(i + 1, i + 3)] || MONOGRAPHS[next] || '';
+            if (nextRom && /^[aiueoy]/.test(nextRom)) {
+              out += "n'";
+            } else {
+              out += 'n';
+            }
+            i += 1;
+            continue;
+          }
+
+          if (MONOGRAPHS[ch]) {
+            out += MONOGRAPHS[ch];
+          } else {
+            out += ch;
+          }
+          i += 1;
+        }
+
+        if (useMacron) {
+          out = out
+            .replace(/ou/g, 'ō')
+            .replace(/oo/g, 'ō')
+            .replace(/uu/g, 'ū');
+        }
+        return out;
+      }
+
+      const FALLBACK_WORDS = {
+        '今日': 'キョウ', '天気': 'テンキ', '東京': 'トウキョウ', '図書館': 'トショカン',
+        '日本語': 'ニホンゴ', '勉強': 'ベンキョウ', '桜': 'サクラ', '花': 'ハナ',
+        '季節': 'キセツ', '京都': 'キョウト', '明日': 'アシタ', '朝': 'アサ',
+        '駅': 'エキ', '前': 'マエ', '一期一会': 'イチゴイチエ', '心': 'ココロ',
+        '大切': 'タイセツ', '毎日': 'マイニチ', '少': 'スコ', '成長': 'セイチョウ'
+      };
+
+      const HAS_KANJI_OR_KANA = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\u3400-\u4DBF々ヶ]/;
+      const IS_KANA_ONLY = /^[\u3040-\u309F\u30A0-\u30FFー]+$/;
+      const IS_PUNCT = /^[\s、。！？「」『』（）(),.!?:;・〜\-]+$/;
+
+      function splitOkurigana(surface, readingKata) {
+        if (!surface || !readingKata || IS_KANA_ONLY.test(surface)) {
+          return [{ text: surface, reading: readingKata, isJapanese: HAS_KANJI_OR_KANA.test(surface) }];
+        }
+        const surfKata = toKatakana(surface);
+        let suffixLen = 0;
+        while (
+          suffixLen < surfKata.length &&
+          suffixLen < readingKata.length &&
+          IS_KANA_ONLY.test(surfKata[surfKata.length - 1 - suffixLen]) &&
+          surfKata[surfKata.length - 1 - suffixLen] === readingKata[readingKata.length - 1 - suffixLen]
+        ) {
+          suffixLen++;
+        }
+        if (suffixLen > 0 && suffixLen < surface.length) {
+          const stem = surface.slice(0, surface.length - suffixLen);
+          const stemRead = readingKata.slice(0, readingKata.length - suffixLen);
+          const okuri = surface.slice(surface.length - suffixLen);
+          const okuriRead = readingKata.slice(readingKata.length - suffixLen);
+          return [
+            { text: stem, reading: stemRead, isJapanese: true },
+            { text: okuri, reading: okuriRead, isJapanese: true }
+          ];
+        }
+        return [{ text: surface, reading: readingKata, isJapanese: true }];
+      }
+
+  /* ===== PROTOTIPE: kamus klik ===== */
+  var POS_MAP_LOCAL = {
+        '名詞': 'Kata Benda',
+        '動詞': 'Kata Kerja',
+        '形容詞': 'Kata Sifat',
+        '副詞': 'Kata Keterangan',
+        '助詞': 'Partikel',
+        '助動詞': 'Kata Bantu',
+        '接続詞': 'Kata Sambung',
+        '感動詞': 'Kata Seru',
+        '連体詞': 'Penentu',
+        '記号': 'Tanda Baca'
+      };;
+  var baseDict = null, slfDict = null, dictState = 'idle', dictWaiters = [];
+  function loadDicts(cb){
+    if (dictState === 'ready'){ cb(true); return; }
+    dictWaiters.push(cb);
+    if (dictState === 'loading') return;
+    dictState = 'loading';
+    Promise.all([
+      fetch('dict/jmdict-mini.json').then(function(r){ return r.json(); }),
+      fetch('dict/slf-layer.json').then(function(r){ return r.json(); })
+    ]).then(function(res){
+      baseDict = res[0]; slfDict = res[1]; dictState = 'ready';
+      dictWaiters.splice(0).forEach(function(f){ f(true); });
+    }).catch(function(){
+      dictState = 'error';
+      dictWaiters.splice(0).forEach(function(f){ f(false); });
+    });
+  }
+  function dictLookup(basic, surface){
+    if (slfDict){ var s = slfDict[basic] || slfDict[surface]; if (s) return { src: 'id', gloss: s[2] }; }
+    if (baseDict){ var bb = baseDict[basic] || baseDict[surface]; if (bb) return { src: 'en', gloss: bb[2] }; }
+    return null;
+  }
+  var dictPop = document.getElementById('dictPop');
+  var popWord = document.getElementById('dictPopWord'), popPos = document.getElementById('dictPopPos'),
+      popReading = document.getElementById('dictPopReading'), popMeaning = document.getElementById('dictPopMeaning'),
+      popSrc = document.getElementById('dictPopSrc');
+  var popAnchor = null;
+  function closeDictPop(){ dictPop.classList.remove('open'); popAnchor = null; }
+  function positionDictPop(el){
+    var r = el.getBoundingClientRect();
+    var w = Math.min(330, window.innerWidth - 20);
+    var left = Math.max(10, Math.min(r.left, window.innerWidth - w - 10));
+    dictPop.style.left = left + 'px';
+    dictPop.style.width = w + 'px';
+    dictPop.style.top = '0px';
+    var h = dictPop.offsetHeight || 170;
+    var top = r.bottom + 10;
+    if (top + h > window.innerHeight - 8) top = Math.max(8, r.top - h - 10);
+    dictPop.style.top = top + 'px';
+  }
+  function openDictPop(ruby){
+    var d = ruby.dataset;
+    popAnchor = ruby;
+    popWord.textContent = d.surface || '';
+    popPos.textContent = POS_MAP_LOCAL[d.pos] || '';
+    var rd = d.reading || '';
+    popReading.textContent = rd ? (rd + '  ·  ' + kanaToRomaji(rd, true)) : '';
+    popMeaning.textContent = 'Memuat kamus arti (unduhan sekali, ±640 KB)…';
+    popSrc.textContent = '';
+    dictPop.classList.add('open');
+    positionDictPop(ruby);
+    loadDicts(function(ok){
+      if (popAnchor !== ruby) return;
+      if (!ok){ popMeaning.textContent = 'Kamus arti gagal dimuat. Periksa koneksi lalu coba lagi.'; return; }
+      var hit = dictLookup(d.basic, d.surface);
+      if (hit){
+        popMeaning.textContent = hit.gloss;
+        popSrc.textContent = hit.src === 'id' ? 'Arti: lapisan Indonesia / SLF · ' : 'Arti: JMdict (Inggris) · ';
+      } else {
+        popMeaning.textContent = 'Arti belum ada di kamus prototipe ini.';
+        popSrc.textContent = '';
+      }
+      positionDictPop(ruby);
+    });
+  }
+  document.addEventListener('click', function(e){
+    var bodyEl = document.getElementById('chapterBody');
+    if (dictPop.contains(e.target)) return;
+    var ruby = e.target.closest ? e.target.closest('ruby') : null;
+    if (ruby && bodyEl && bodyEl.contains(ruby) && ruby.dataset && ruby.dataset.basic){ openDictPop(ruby); }
+    else closeDictPop();
+  });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeDictPop(); });
+  window.addEventListener('scroll', function(){ if (popAnchor) closeDictPop(); }, { passive: true });
+
+//]]>
+</script>
+</body></html>
